@@ -11,7 +11,22 @@ let naloga1 vsebina_datoteke =
                     |_ -> counter 
     in increase lst 0 |> string_of_int
 let naloga2 vsebina_datoteke =
-    ""
+    let vsebina_datoteke_no_spaces = String.trim vsebina_datoteke in 
+    let str_lst = (String.split_on_char '\n' vsebina_datoteke_no_spaces) in 
+        let lst = List.map int_of_string str_lst in 
+                let rec increase_triple lst counter before = 
+                    match lst with
+                    |first :: second :: third :: xs -> (
+                        if before != 0 then (
+                            if before < (first + second + third) then increase_triple (second :: third :: xs) (counter + 1) (first + second + third)
+                            else increase_triple (second :: third :: xs) (counter) (first + second + third)
+                        )
+                        else let before = (first + second + third)
+                            in increase_triple (second :: third :: xs) counter before
+                    )
+                    |_ -> counter 
+    in increase_triple lst 0 0 |> string_of_int
+
 let _ =
     let preberi_datoteko ime_datoteke =
         let chan = open_in ime_datoteke in
