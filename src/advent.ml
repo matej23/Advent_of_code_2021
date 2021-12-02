@@ -1,9 +1,17 @@
-let naloga1 vsebina_datoteke =
-    "10"
-
+let naloga1 vsebina_datoteke = 
+    let vsebina_datoteke_no_spaces = String.trim vsebina_datoteke in 
+    let str_lst = (String.split_on_char '\n' vsebina_datoteke_no_spaces) in 
+        let lst = List.map int_of_string str_lst in 
+                let rec increase lst counter = 
+                    match lst with
+                    |first :: second :: xs -> (
+                        if first < second then increase (second :: xs) counter + 1
+                        else increase (second :: xs) counter 
+                    )
+                    |_ -> counter 
+    in increase lst 0 |> string_of_int
 let naloga2 vsebina_datoteke =
-    string_of_int (String.length vsebina_datoteke)
-
+    ""
 let _ =
     let preberi_datoteko ime_datoteke =
         let chan = open_in ime_datoteke in
@@ -19,5 +27,5 @@ let _ =
     let odgovor1 = naloga1 vsebina_datoteke
     and odgovor2 = naloga2 vsebina_datoteke
     in
-    izpisi_datoteko "out/day_0_1.out" odgovor1;
-    izpisi_datoteko "out/day_0_2.out" odgovor2
+    izpisi_datoteko "out/day_1_1.out" odgovor1;
+    izpisi_datoteko "out/day_1_2.out" odgovor2
