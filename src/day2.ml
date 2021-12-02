@@ -18,7 +18,25 @@ let naloga1 vsebina_datoteke =
             |_-> horizontal * depth
         in position 0 0 lst_tuple |> string_of_int
 let naloga2 vsebina_datoteke =
-""
+    let lst_str_tuple = (String.split_on_char '\n' vsebina_datoteke) in 
+        let lst_tuple = List.map (String.split_on_char ' ') lst_str_tuple in 
+        let rec position depth horizontal aim lst_tuple = match lst_tuple with
+            (*[["neki"; "10"]; ["nekidruzga"; 11]]*)
+            |first :: xs -> (match first with
+                |way :: value :: other ->
+                    if way = "forward" then position (depth + (aim * (int_of_string value))) (horizontal + (int_of_string value)) aim xs
+                    else (
+                        if way = "down" then position depth horizontal (aim + (int_of_string value)) xs
+                        else (
+                            if way = "up" then position depth horizontal (aim - (int_of_string value)) xs
+                            else failwith "kam pa kam"
+                        )
+                    )
+                |_ -> depth * horizontal
+            )
+            |_-> horizontal * depth
+        in position 0 0 0 lst_tuple |> string_of_int
+        
 let _ =
   let preberi_datoteko ime_datoteke =
       let chan = open_in ime_datoteke in
