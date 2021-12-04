@@ -36,7 +36,6 @@ let naloga1 vsebina_datoteke =
     let str_lst = (String.split_on_char '\n' vsebina_datoteke_no_spaces) in
       all_index str_lst (String.length (List.nth str_lst 0)) [] []
 (*-------------------------------------------------------------------------------------------------------------------*)
-
   let rec lookup_2_gamma lst index zero_counter one_counter = match lst with
   (*dobi lst in na vsakem elementu lst, ki je string na izbranem indexu preveri kaj se nahaja - indexi se zacnejo na stringu z 0, zato gledamo na index - 1 *)
   |x :: xs -> (
@@ -76,8 +75,8 @@ let rec lookup_2_epsilon lst index zero_counter one_counter = match lst with
   let rec remove lst index based_value = match lst with
   |x :: xs -> (
     if Char.code(String.get x index) = based_value then (x :: remove xs index based_value)
-    else remove xs index based_value
-  )
+    else (remove xs index based_value)
+    )
   |_ -> []
 (*string.get steje prvi element kot 0 indeks*)
 let rec all_index_2_epsilon lst start_front = 
