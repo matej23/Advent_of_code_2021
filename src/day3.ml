@@ -36,7 +36,7 @@ let naloga1 vsebina_datoteke =
     let str_lst = (String.split_on_char '\n' vsebina_datoteke_no_spaces) in
       all_index str_lst (String.length (List.nth str_lst 0)) [] []
 (*-------------------------------------------------------------------------------------------------------------------*)
-  let rec lookup_2_gamma lst index zero_counter one_counter = match lst with
+(*let rec lookup_2_gamma lst index zero_counter one_counter = match lst with
   (*dobi lst in na vsakem elementu lst, ki je string na izbranem indexu preveri kaj se nahaja - indexi se zacnejo na stringu z 0, zato gledamo na index - 1 *)
   |x :: xs -> (
     if String.length x < index then failwith "prekratko"
@@ -49,7 +49,7 @@ let naloga1 vsebina_datoteke =
     )
   )
   |[] -> (
-    if zero_counter > one_counter then "48"
+    if zero_counter < one_counter then "48"
     else ("49"
     )
   )
@@ -72,12 +72,15 @@ let rec lookup_2_epsilon lst index zero_counter one_counter = match lst with
     )
   )
   (*prvi element lst ima indeks 1*)
-  let rec remove lst index based_value = match lst with
-  |x :: xs -> (
-    if Char.code(String.get x index) = based_value then (x :: remove xs index based_value)
-    else (remove xs index based_value)
+  let rec remove lst index based_value = match List.length lst with
+  |1 -> lst
+  |_-> match lst with
+    |x :: xs -> (
+      if Char.code(String.get x index) = based_value then (x :: remove xs index based_value)
+      else (remove xs index based_value)
     )
-  |_ -> []
+    |_ -> []
+
 (*string.get steje prvi element kot 0 indeks*)
 let rec all_index_2_epsilon lst start_front = 
   if start_front < String.length(List.nth lst 0) then (
@@ -94,11 +97,70 @@ let rec binary_to_decimal list_binary_str =
   int_of_string("0b" ^ String.concat "" list_binary_str)
   let find_gamma_epsilon lst =
     string_of_int(binary_to_decimal(all_index_2_epsilon lst 0) * binary_to_decimal(all_index_2_gamma lst 0))
-  let naloga2 vsebina_datoteke =
-    let vsebina_datoteke_no_spaces = String.trim vsebina_datoteke in 
-    let str_lst = (String.split_on_char '\n' vsebina_datoteke_no_spaces) in 
-    find_gamma_epsilon str_lst
+*)
+let rec for_epsilon lst index zero_counter one_counter = match lst with
+  | x :: xs -> (
+    if int_of_char(String.get x (index - 1)) = 48 then (for_epsilon xs index (zero_counter+1) one_counter)
+    else (
+      if int_of_char(String.get x (index -1 )) = 49 then (for_epsilon xs index zero_counter (one_counter +1))
+      else failwith "ne prepozna"
+    )
+  )
+  |_-> (
+    if (one_counter > zero_counter) then 48
+    else(
+      if (zero_counter > one_counter) then 49
+      else 48
+    )
+  )
 
+let rec for_gamma lst index zero_counter one_counter = match lst with
+| x :: xs -> (
+  if int_of_char(String.get x (index - 1)) = 48 then (for_gamma xs index (zero_counter+1) one_counter)
+  else (
+    if int_of_char(String.get x (index -1 )) = 49 then (for_gamma xs index zero_counter (one_counter +1))
+    else failwith "ne prepozna"
+  )
+)
+|_-> (
+  if (one_counter > zero_counter) then 49
+  else(
+    if (zero_counter > one_counter) then 48
+    else 49
+  )
+)
+let rec remove_diff lst index value = match List.length lst with
+  |0 -> failwith "neki je narobe"
+  |1 -> lst
+  |_-> match lst with
+    |x :: xs -> (
+      if int_of_char(String.get x (index - 1)) = value then (x :: (remove_diff xs index value))
+      else (remove_diff xs index value)
+    )
+    |_-> failwith "pojavila se je napaka"
+
+let rec remove_epsilon_all_index lst start_index = 
+  if List.length lst > 0 then (
+    if (start_index <= String.length(List.nth lst 0)) then (remove_epsilon_all_index (remove_diff lst start_index (for_epsilon lst start_index 0 0 )) (start_index+1))
+    else lst
+    )
+  else failwith "nekaj je slo narobe"
+
+let rec remove_gamma_all_index lst start_index = 
+  if List.length lst > 0 then (
+    if (start_index <= String.length(List.nth lst 0)) then (remove_gamma_all_index (remove_diff lst start_index (for_gamma lst start_index 0 0 )) (start_index+1))
+    else lst
+    )
+  else failwith "nekaj je slo narobe"
+let rec binary_to_decimal list_binary_str =
+  int_of_string("0b" ^ String.concat "" list_binary_str)
+  let find_gamma_epsilon lst =
+    string_of_int(binary_to_decimal(remove_epsilon_all_index lst 1) * binary_to_decimal(remove_gamma_all_index lst 1))
+let naloga2 vsebina_datoteke =
+  let vsebina_datoteke_no_spaces = String.trim vsebina_datoteke in 
+  let str_lst = (String.split_on_char '\n' vsebina_datoteke_no_spaces) in 
+    find_gamma_epsilon str_lst
+    
 let _ =
   let preberi_datoteko ime_datoteke =
       let chan = open_in ime_datoteke in
