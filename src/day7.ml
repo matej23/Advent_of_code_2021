@@ -24,11 +24,48 @@ let naloga1 vsebina_datoteke =
   let sorted_lst = List.sort compare int_lst in 
     better (mediana sorted_lst) sorted_lst |> string_of_int
 
+(*-----------------------------------------------------------------------------------------------------*)
+let rec least lst =
+	   match lst with
+	   | [] -> 0
+	   | x :: [] -> x
+	   | x :: xs -> 
+	         let v = least xs in
+	         if x < v then
+	            x
+	         else
+            v
+let rec biggest lst =
+  match lst with
+  | [] -> 0
+  | x :: [] -> x
+  | x :: xs -> 
+          let v = biggest xs in
+        if x > v then
+             x
+        else
+           v
+let rec range i j = if i > j then [] else i :: (range (i+1) j)
+let all_possible lst = 
+  range (least lst) (biggest lst)
+
+let rec difference_2 n = match n with
+  |1 -> 1
+  |x when x > 1 -> x + difference_2 (n-1)
+  |_ -> 0
+let abs a = 
+  if a >= 0 then a
+  else -a
+let rec final_difference lst number = match lst with
+| [] -> 0
+| x ::xs -> difference_2 (abs (x - number)) + final_difference xs number
+let all_differences lst = 
+  (List.map (final_difference lst)) (all_possible lst)
 let naloga2 vsebina_datoteke =
   let vsebina_datoteke_no_spaces = String.trim vsebina_datoteke in 
-  let str_lst = (String.split_on_char '\n' vsebina_datoteke_no_spaces) in 
-  List.nth str_lst 0
-
+  let str_lst = (String.split_on_char ',' vsebina_datoteke_no_spaces) in 
+  let int_lst = List.map int_of_string str_lst in 
+    (all_differences (int_lst)) |> least |> string_of_int
 
 let _ =
   let preberi_datoteko ime_datoteke =
